@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-import com.ericson.ei.handlers.EventHandler;
+import com.ericsson.ei.handlers.EventHandler;
 
 
 @Component

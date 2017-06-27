@@ -1,4 +1,4 @@
-package com.ericson.ei.handlers;
+package com.ericsson.ei.handlers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -1,6 +1,6 @@
 package com.ericsson.ei.jsonmerge;
 
-import com.ericson.ei.handlers.ObjectHandler;
+import com.ericsson.ei.handlers.ObjectHandler;
 import com.ericsson.ei.jmespath.JmesPathInterface;
 import com.ericsson.ei.rules.RulesObject;
 

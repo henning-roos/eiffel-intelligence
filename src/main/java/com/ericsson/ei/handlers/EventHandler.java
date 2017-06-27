@@ -1,4 +1,4 @@
-package com.ericson.ei.handlers;
+package com.ericsson.ei.handlers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

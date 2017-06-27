@@ -1,5 +1,7 @@
 package com.ericsson.ei.mongodbhandler;
 
+import org.springframework.stereotype.Component;
+
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -8,6 +10,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.WriteResult;
 import com.mongodb.util.JSON;
 
+@Component
 public class MongoDBHandler {
     MongoClient mongoClient;
 
