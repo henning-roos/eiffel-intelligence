@@ -8,6 +8,8 @@ import com.ericsson.ei.mongodbhandler.MongoDBHandler;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+
 import org.junit.AfterClass;
 
 public class MongoDBHandlerTest {
@@ -32,12 +34,14 @@ public class MongoDBHandlerTest {
 
     @Test
     public void testGetDocuments(){
-        assertTrue(mongoDBHandler.getAllDocuments(dataBaseName, collectionName));
+        ArrayList<String> documents = mongoDBHandler.getAllDocuments(dataBaseName, collectionName);
+        assertTrue(documents.size() > 0);
     }
 
     @Test
     public void testGetDocumentOnCondition(){
-        assertTrue(mongoDBHandler.getDocumentOnCondition(dataBaseName, collectionName, condition));
+        ArrayList<String> documents = mongoDBHandler.getDocumentsOnCondition(dataBaseName, collectionName, condition);
+        assertTrue(documents.size() > 0);
     }
 
     @Test

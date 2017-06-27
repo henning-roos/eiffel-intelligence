@@ -2,6 +2,8 @@ package com.ericsson.ei.mongodbhandler;
 
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.mongodb.DB;
@@ -14,6 +16,8 @@ import com.mongodb.util.JSON;
 
 @Component
 public class MongoDBHandler {
+    static Logger log = (Logger) LoggerFactory.getLogger(MongoDBHandler.class);
+
     MongoClient mongoClient;
 
     //Establishing the connection to mongodb and creating a collection
@@ -39,7 +43,8 @@ public class MongoDBHandler {
     }
 
     //Retrieve entire data from  collection
-    public boolean getAllDocuments(String dataBaseName, String collectionName){
+    public ArrayList<String> getAllDocuments(String dataBaseName, String collectionName){
+        ArrayList<String> result = new ArrayList<>();
         try{
             DB db = mongoClient.getDB(dataBaseName);
             DBCollection table = db.getCollection(collectionName);
@@ -47,20 +52,21 @@ public class MongoDBHandler {
             if (cursor.count()!=0){
                 int i = 1;
                 while (cursor.hasNext()) {
-                    System.out.println("Inserted Document: "+i);
-                    System.out.println(cursor.next());
+                    DBObject document = cursor.next();
+                    String documentStr = document.toString();
+                    log.info("Got Document: "+i);
+                    log.info(documentStr);
+                    result.add(documentStr);
                     i++;
                 }
-                return true;
             }
             else{
-                System.out.println("No documents found");
-                return false;
+                log.info("No documents found");
             }
         }catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.info(e.getMessage(), e);
         }
-        return false;
+        return result;
     }
 
     //Retrieve data from the collection based on condition
@@ -74,14 +80,16 @@ public class MongoDBHandler {
             if (conditionalCursor.count()!=0){
                 while(conditionalCursor.hasNext()) {
                     DBObject object = conditionalCursor.next();
-                    System.out.println(object);
+                    String documentStr = object.toString();
+                    log.info(documentStr);
+                    result.add(documentStr);
                 }
             }
             else{
-                System.out.println("No documents found with given condition");
+                log.info("No documents found with given condition");
             }
         }catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.info(e.getMessage(), e);
         }
         return result;
     }
@@ -89,21 +97,14 @@ public class MongoDBHandler {
     //update the document in collection
     public  boolean updateDocument(String dataBaseName, String collectionName, String input, String updateInput ){
         try{
-            boolean existing = getDocumentOnCondition(dataBaseName,collectionName,input);
-            if(existing){
-                DB db = mongoClient.getDB(dataBaseName);
-                DBCollection table = db.getCollection(collectionName);
-                DBObject dbObjectInput = (DBObject)JSON.parse(input);
-                DBObject dbObjectUpdateInput = (DBObject)JSON.parse(updateInput);
-                WriteResult result = table.update(dbObjectInput , dbObjectUpdateInput);
-                return result.isUpdateOfExisting();
-            }
-            else{
-                System.out.println("Provide valid input document that needs to get updated");
-                return false;
-            }
+            DB db = mongoClient.getDB(dataBaseName);
+            DBCollection table = db.getCollection(collectionName);
+            DBObject dbObjectInput = (DBObject)JSON.parse(input);
+            DBObject dbObjectUpdateInput = (DBObject)JSON.parse(updateInput);
+            WriteResult result = table.update(dbObjectInput , dbObjectUpdateInput);
+            return result.isUpdateOfExisting();
         }catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.info(e.getMessage(), e);
         }
         return false;
     }
@@ -119,11 +120,11 @@ public class MongoDBHandler {
                 return true;
             }
             else{
-                System.out.println("No documents found to delete");
+                log.info("No documents found to delete");
                 return false;
             }
         }catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.info(e.getMessage(), e);
         }
         return false;
     }

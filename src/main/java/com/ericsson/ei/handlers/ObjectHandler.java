@@ -1,5 +1,7 @@
 package com.ericsson.ei.handlers;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -23,8 +25,11 @@ public class ObjectHandler {
         insertObject(aggregatedObject.asText());
     }
 
+    public ArrayList<String> findObjectsById(String condition) {
+        return mongoDbHandler.getDocumentsOnCondition(databaseName, collectionName, condition);
+    }
+
     public String findObjectById(String condition) {
-        return "";
-        //return mongoDbHandler.getDocumentOnCondition(databaseName, collectionName, condition);
+        return mongoDbHandler.getDocumentsOnCondition(databaseName, collectionName, condition).get(0);
     }
 }
