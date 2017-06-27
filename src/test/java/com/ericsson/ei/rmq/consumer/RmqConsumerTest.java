@@ -96,7 +96,7 @@ public class RmqConsumerTest {
 
     @Test
     public void testMessageBusConnection() {
-        factory = rmqConsumer.bindToMessageBus();
+        factory = rmqConsumer.connectionFactory();
         assertNotNull(factory);
     }
 }
