@@ -9,10 +9,10 @@ import static org.junit.Assert.assertTrue;
 
 public class MongoDBHandlerTest {
 MongoDBHandler mongoDBHandler = new MongoDBHandler();
-    
+
     String host = "localhost";
     int port = 27017;
-    
+
     String dataBaseName = "EventStorageDBbbb";
     String collectionName = "SampleEvents";
     String input = "{\"id\":\"eventId\",\"type\":\"eventType11\",\"test_cases\" : [{\"event_id\" : \"testcaseid1\", \"test_data\" : \"testcase1data\"},{\"event_id\" : \"testcaseid2\", \"test_data\" : \"testcase2data\"}]}";
@@ -28,7 +28,7 @@ MongoDBHandler mongoDBHandler = new MongoDBHandler();
     @Test
     public void testInsertDocument(){
         assertTrue(mongoDBHandler.insertDocument(dataBaseName, collectionName, input));
-        
+
     }
 
     @Test
