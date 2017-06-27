@@ -1,4 +1,4 @@
-package com.ericsson.ei.mongoDBHandler;
+package com.ericsson.ei.mongodbhandler;
 
 import com.mongodb.DB;
 import com.mongodb.DBCollection;

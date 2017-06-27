@@ -2,9 +2,10 @@ package com.ericsson.ei.mongoDBHandler.test;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
 
-import com.ericsson.ei.mongoDBHandler.MongoDBHandler;
+import com.ericsson.ei.mongodbhandler.MongoDBHandler;
+
+import static org.junit.Assert.assertTrue;
 
 public class MongoDBHandlerTest {
 MongoDBHandler mongoDBHandler = new MongoDBHandler();
