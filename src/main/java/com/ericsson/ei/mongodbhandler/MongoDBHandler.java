@@ -41,9 +41,9 @@ public class MongoDBHandler {
             DBCursor cursor = table.find();
             if (cursor.count()!=0){
                 int i = 1;
-                while (cursor.hasNext()) { 
-                    System.out.println("Inserted Document: "+i); 
-                    System.out.println(cursor.next()); 
+                while (cursor.hasNext()) {
+                    System.out.println("Inserted Document: "+i);
+                    System.out.println(cursor.next());
                     i++;
                 }
                 return true;
@@ -59,7 +59,7 @@ public class MongoDBHandler {
     }
 
     //Retrieve data from the collection based on condition
-    public  boolean getDocumentOnCondition(String dataBaseName, String collectionName,String condition){
+    public  boolean getDocumentOnCondition(String dataBaseName, String collectionName, String condition){
         try{
             DB db = mongoClient.getDB(dataBaseName);
             DBCollection table = db.getCollection(collectionName);
