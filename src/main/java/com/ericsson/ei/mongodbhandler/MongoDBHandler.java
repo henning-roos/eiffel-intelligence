@@ -1,5 +1,7 @@
 package com.ericsson.ei.mongodbhandler;
 
+import java.util.ArrayList;
+
 import org.springframework.stereotype.Component;
 
 import com.mongodb.DB;
@@ -62,7 +64,8 @@ public class MongoDBHandler {
     }
 
     //Retrieve data from the collection based on condition
-    public  boolean getDocumentOnCondition(String dataBaseName, String collectionName, String condition){
+    public  ArrayList<String> getDocumentsOnCondition(String dataBaseName, String collectionName, String condition){
+        ArrayList<String> result = new ArrayList<>();
         try{
             DB db = mongoClient.getDB(dataBaseName);
             DBCollection table = db.getCollection(collectionName);
@@ -70,18 +73,17 @@ public class MongoDBHandler {
             DBCursor conditionalCursor = table.find(dbObjectCondition);
             if (conditionalCursor.count()!=0){
                 while(conditionalCursor.hasNext()) {
-                    System.out.println(conditionalCursor.next());
+                    DBObject object = conditionalCursor.next();
+                    System.out.println(object);
                 }
-                return true;
             }
             else{
                 System.out.println("No documents found with given condition");
-                return false;
             }
         }catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return false;
+        return result;
     }
 
     //update the document in collection

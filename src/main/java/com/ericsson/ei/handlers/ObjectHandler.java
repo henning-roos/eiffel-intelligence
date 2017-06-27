@@ -15,8 +15,8 @@ public class ObjectHandler {
     @Autowired
     private MongoDBHandler mongoDbHandler;
 
-    public void insertObject(String aggregatedObject) {
-
+    public boolean insertObject(String aggregatedObject) {
+        return mongoDbHandler.insertDocument(databaseName, collectionName, aggregatedObject);
     }
 
     public void insertObject(JsonNode aggregatedObject) {
