@@ -7,6 +7,7 @@ import org.junit.Test;
 import com.ericsson.ei.mongodbhandler.MongoDBHandler;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
@@ -39,10 +40,18 @@ public class MongoDBHandlerTest {
     }
 
     @Test
-    public void testGetDocumentOnCondition(){
+    public void testGetDocumentsOnCondition(){
         ArrayList<String> documents = mongoDBHandler.getDocumentsOnCondition(dataBaseName, collectionName, condition);
         assertTrue(documents.size() > 0);
     }
+
+//    @Test
+//    TODO fix this test case
+//    public void testGetDocumentOnCondition(){
+//        ArrayList<String> documents = mongoDBHandler.getDocumentsOnCondition(dataBaseName, collectionName, condition);
+//        String document = documents.get(0);
+//        assertEquals(document, input);
+//    }
 
     @Test
     public void testUpdateDocument(){
