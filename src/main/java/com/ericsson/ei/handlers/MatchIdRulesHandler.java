@@ -13,10 +13,16 @@ public class MatchIdRulesHandler {
     @Autowired
     private ObjectHandler objHandler;
 
+    @Autowired
+    private EventToObjectMapHandler eventToObjectMapHandler;
+
     public ArrayList<String> fetchObjectsById(RulesObject ruleObject, String id) {
         String matchIdString = ruleObject.getMatchIdRules();
         String fetchQuerry = replaceIdInRules(matchIdString, id);
-        return objHandler.findObjectsByCondition(fetchQuerry);
+        ArrayList<String> objects = objHandler.findObjectsByCondition(fetchQuerry);
+        if (objects.isEmpty())
+            objects = eventToObjectMapHandler.getObjectsForEventId(id);
+        return objects;
     }
 
     public static String replaceIdInRules(String matchIdString, String id) {

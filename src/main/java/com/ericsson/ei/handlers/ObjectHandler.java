@@ -44,6 +44,9 @@ public class ObjectHandler {
     @Autowired
     private JmesPathInterface jmespathInterface;
 
+    @Autowired
+    private EventToObjectMapHandler eventToObjectMap;
+
     public void setJmespathInterface(JmesPathInterface jmespathInterface) {
         this.jmespathInterface = jmespathInterface;
     }
@@ -56,7 +59,10 @@ public class ObjectHandler {
         }
         JsonNode document = prepareDocumentForInsertion(id, aggregatedObject);
         String documentStr = document.toString();
-        return mongoDbHandler.insertDocument(databaseName, collectionName, documentStr);
+        boolean result = mongoDbHandler.insertDocument(databaseName, collectionName, documentStr);
+        if (result)
+            eventToObjectMap.updateEventToObjectMapInMemoryDB(rulesObject, event, id);
+        return result;
     }
 
     public boolean insertObject(JsonNode aggregatedObject, RulesObject rulesObject, String event, String id) {
@@ -70,8 +76,12 @@ public class ObjectHandler {
             id = idNode.textValue();
         }
         JsonNode document = prepareDocumentForInsertion(id, aggregatedObject);
+        String condition = "{\"_id\" : \"" + id + "\"}";
         String documentStr = document.toString();
-        return mongoDbHandler.updateDocument(databaseName, collectionName, documentStr, documentStr);
+        boolean result = mongoDbHandler.updateDocument(databaseName, collectionName, condition, documentStr);
+        if (result)
+            eventToObjectMap.updateEventToObjectMapInMemoryDB(rulesObject, event, id);
+        return result;
     }
 
     public boolean updateObject(JsonNode aggregatedObject, RulesObject rulesObject, String event, String id) {

@@ -33,9 +33,6 @@ public class MergeHandler {
     @Autowired
     private ObjectHandler objectHandler;
 
-    @Autowired
-    private EventToObjectMapHandler eventToObjectMap;
-
     public void setJmesPathInterface(JmesPathInterface jmesPathInterface) {
         this.jmesPathInterface = jmesPathInterface;
     }
@@ -152,9 +149,5 @@ public class MergeHandler {
 
     public void addNewObject(String event, JsonNode newObject, RulesObject rulesObject) {
         objectHandler.insertObject(newObject, rulesObject, event, null);
-    }
-
-    public void updateEventToObjectMapInMemoryDB(String event, String object) {
-        eventToObjectMap.updateEventToObjectMapInMemoryDB(event, object);
     }
 }
