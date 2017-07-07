@@ -20,8 +20,10 @@ public class MatchIdRulesHandler {
         String matchIdString = ruleObject.getMatchIdRules();
         String fetchQuerry = replaceIdInRules(matchIdString, id);
         ArrayList<String> objects = objHandler.findObjectsByCondition(fetchQuerry);
-        if (objects.isEmpty())
-            objects = eventToObjectMapHandler.getObjectsForEventId(id);
+        if (objects.isEmpty()) {
+            ArrayList<String> objectIds = eventToObjectMapHandler.getObjectsForEventId(id);
+            objects = objHandler.findObjectsByIds(objectIds);
+        }
         return objects;
     }
 

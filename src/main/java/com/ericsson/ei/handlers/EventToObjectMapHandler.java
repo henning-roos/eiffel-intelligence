@@ -21,6 +21,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * @author evasiba
@@ -36,6 +38,8 @@ public class EventToObjectMapHandler {
 
     @Value("${event_object_map.collection.name}") private String collectionName;
     @Value("${database.name}") private String databaseName;
+
+    private final String listPropertyName = "objects";
 
     @Autowired
     MongoDBHandler mongodbhandler;
@@ -61,53 +65,64 @@ public class EventToObjectMapHandler {
 
     public ArrayList<String> getObjectsForEvent(RulesObject rulesObject, String event) {
         String eventId = getEventId(rulesObject, event);
-        Map<String, ArrayList<String>> map =  getEventToObjectMap(eventId);
-        return map.get(eventId);
+        return getEventToObjectList(eventId);
     }
 
     public ArrayList<String> getObjectsForEventId(String eventId) {
-        Map<String, ArrayList<String>> map =  getEventToObjectMap(eventId);
-        return map.get(eventId);
+        return getEventToObjectList(eventId);
     }
 
     public void updateEventToObjectMapInMemoryDB(RulesObject rulesObject, String event, String objectId) {
         String eventId = getEventId(rulesObject, event);
-        Map<String, ArrayList<String>> map =  getEventToObjectMap(eventId);
-        map = updateMap(map, eventId, objectId);
+        String condition = "{\"_id\" : \"" + eventId + "\"}";
+        ArrayList<String> list =  getEventToObjectList(eventId);
+        boolean firstTime = list.isEmpty();
+        list = updateList(list, eventId, objectId);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode entry = null;
 
+        try {
+            entry = new ObjectMapper().readValue(condition, JsonNode.class);
+            ArrayNode jsonNode = mapper.convertValue(list, ArrayNode.class);
+            ((ObjectNode) entry).put(listPropertyName, jsonNode);
+            String mapStr = entry.toString();
+            if (firstTime) {
+                mongodbhandler.insertDocument(databaseName, collectionName, mapStr);
+            } else {
+                mongodbhandler.updateDocument(databaseName, collectionName, condition, mapStr);
+            }
+        } catch (Exception e) {
+            log.info(e.getMessage(),e);
+        }
     }
 
     public String getEventId(RulesObject rulesObject, String event) {
         String idRule = rulesObject.getIdRule();
         JsonNode eventIdJson = jmesPathInterface.runRuleOnEvent(idRule, event);
-        return eventIdJson.toString();
+        return eventIdJson.textValue();
     }
 
-    public Map<String, ArrayList<String>> updateMap(Map<String, ArrayList<String>> map, String eventId, String objectId) {
-        ArrayList<String> objectIds = map.get(eventId);
-        if (objectIds == null) {
-            objectIds = new ArrayList<String>();
-        }
-        objectIds.add(objectId);
-        map.put(eventId, objectIds);
-        return map;
+    public ArrayList<String> updateList(ArrayList<String> list, String eventId, String objectId) {
+        list.add(objectId);
+        return list;
     }
 
-    public Map<String, ArrayList<String>> getEventToObjectMap(String eventId) {
-        Map<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+    public ArrayList<String> getEventToObjectList(String eventId) {
+        ArrayList<String> list = new ArrayList<String>();
         String condition = "{\"_id\" : \"" + eventId + "\"}";
         ArrayList<String> documents = mongodbhandler.find(databaseName, collectionName, condition);
-        String mapStr = documents.get(0);
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            JsonNode mapJson = mapper.readValue(mapStr, JsonNode.class);
-            JsonNode value = mapJson.get(eventId);
-            ArrayList<String> idList = new ObjectMapper().readValue(value.traverse(), new TypeReference<ArrayList<String>>(){});
-            map.put(eventId, idList);
-        } catch (Exception e) {
-            log.info(e.getMessage(),e);
+        if (!documents.isEmpty()) {
+            String mapStr = documents.get(0);
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                JsonNode document = mapper.readValue(mapStr, JsonNode.class);
+                JsonNode value = document.get(listPropertyName);
+                list = new ObjectMapper().readValue(value.traverse(), new TypeReference<ArrayList<String>>(){});
+            } catch (Exception e) {
+                log.info(e.getMessage(),e);
+            }
         }
-        return map;
+        return list;
     }
 
 

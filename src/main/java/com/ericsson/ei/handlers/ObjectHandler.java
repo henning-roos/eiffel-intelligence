@@ -1,6 +1,5 @@
 package com.ericsson.ei.handlers;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
@@ -12,8 +11,6 @@ import org.springframework.stereotype.Component;
 import com.ericsson.ei.jmespath.JmesPathInterface;
 import com.ericsson.ei.mongodbhandler.MongoDBHandler;
 import com.ericsson.ei.rules.RulesObject;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -99,6 +96,14 @@ public class ObjectHandler {
         if (result != null)
             return result.asText();
         return document;
+    }
+
+    public ArrayList<String> findObjectsByIds(ArrayList<String> ids) {
+        ArrayList<String> objects = new ArrayList<String>();
+        for (String id : ids) {
+            objects.add(findObjectById(id));
+        }
+        return objects;
     }
 
     private JsonNode prepareDocumentForInsertion(String id, String object) {
