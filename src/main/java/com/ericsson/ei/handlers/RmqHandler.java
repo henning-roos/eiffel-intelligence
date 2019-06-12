@@ -112,7 +112,7 @@ public class RmqHandler {
 
 
     @Bean
-    ConnectionFactory connectionFactory() {
+    public ConnectionFactory connectionFactory() {
         cachingConnectionFactory = new CachingConnectionFactory(host, port);
 
         if (user != null && user.length() != 0 && password != null && password.length() != 0) {
